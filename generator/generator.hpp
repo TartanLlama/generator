@@ -58,9 +58,9 @@ namespace tl {
          
          generator_iterator() = default;
          //Non-copyable because coroutine handles point to a unique resource
-         generator_iterator(generator_iterator const&) = default; //DRAGONS
+         generator_iterator(generator_iterator const&) = delete;
          generator_iterator(generator_iterator&& rhs) : handle_(std::exchange(rhs.handle_, nullptr)) {}
-         generator_iterator& operator=(generator_iterator const&) = default;
+         generator_iterator& operator=(generator_iterator const&) = delete;
          generator_iterator& operator=(generator_iterator&& rhs) {
             handle_ = std::exchange(rhs.handle_, nullptr);
             return *this;
