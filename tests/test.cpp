@@ -1,4 +1,4 @@
-#include "generator.h"
+#include "generator.hpp"
 #include <ranges>
 
 template <class T>
@@ -55,6 +55,19 @@ tl::generator<std::vector<std::string>> split_by_lines_and_whitespace(std::strin
       ++pos;
    }
 }
+
+#include <random>
+namespace tl {
+   tl::generator<const int> rand() {
+      std::random_device rd; 
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> distrib(1, 6);
+
+      while (true) {
+         co_yield distrib(gen);
+      }
+   }
+}
 int main() {
    auto input = R"(
 one two three
@@ -68,5 +81,9 @@ hello
          std::cout << s << ',';
       }
       std::cout << '\n';
+   }
+
+   for (auto i : (tl::rand() | std::views::take(10))) {
+      std::cout << i << '\n';
    }
 }
