@@ -1,7 +1,6 @@
 {
   "name": "generator",
-  "version": "0.1",
-  "dependencies": [ "catch2" ],
+  "version-semver": "0.1.0",
   "maintainers": [ "Sy Brand (tartanllama@gmail.com)" ],
   "description":  "C++20 generator implementation on coroutines"
 }

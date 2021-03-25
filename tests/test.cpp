@@ -1,4 +1,5 @@
-#include "generator.hpp"
+#include <tl/generator.hpp>
+#include <catch2/catch.hpp>
 #include <ranges>
 
 template <class T>
@@ -10,6 +11,14 @@ tl::generator<T> firstn(T t) {
    }
 }
 
+TEST_CASE("firstn") {
+   auto i = 0;
+   for (auto n : firstn(20)) {
+      REQUIRE(n == i);
+      ++i;
+   }
+}
+
 template <class T>
 tl::generator<T> iota(T t = T{ 0 }) {
    while (true) {
@@ -18,19 +27,18 @@ tl::generator<T> iota(T t = T{ 0 }) {
    }
 }
 
-
-#include <iostream>
-struct regular_void{};
-namespace tl {
-   tl::generator<const regular_void> clock() {
-      while (true) {
-         std::cout << "tick";
-         co_yield {};
-         std::cout << "tock";
-         co_yield{};
-      }
+TEST_CASE("iota") {
+   auto i = 0;
+   for (auto n : iota<int>() | std::views::take(10)) {
+      REQUIRE(n == i);
+      ++i;
+   }
+   for (auto n : iota(10) | std::views::take(10)) {
+      REQUIRE(n == i);
+      ++i;
    }
 }
+
 #include <vector>
 #include <string>
 #include <string_view>
@@ -44,46 +52,39 @@ tl::generator<std::vector<std::string>> split_by_lines_and_whitespace(std::strin
    while (pos != sv.end()) {
       if (*pos == ' ') {
          res.push_back(std::string(start, pos));
-         start = pos;
+         start = pos+1;
       }
       if (*pos == '\n') {
          res.push_back(std::string(start, pos));
          co_yield res;
          res.clear();
-         start = pos;
+         start = pos+1;
       }
       ++pos;
    }
 }
 
-#include <random>
-namespace tl {
-   tl::generator<const int> rand() {
-      std::random_device rd; 
-      std::mt19937 gen(rd());
-      std::uniform_int_distribution<> distrib(1, 6);
-
-      while (true) {
-         co_yield distrib(gen);
-      }
+template <class Range>
+tl::generator<std::pair<std::size_t, std::ranges::range_reference_t<Range>>> enumerate(Range&& r) {
+   std::size_t i = 0;
+   for (auto&& val : std::forward<Range>(r)) {
+      std::pair<std::size_t, std::ranges::range_reference_t<Range>> pair {i, std::forward<decltype(val)>(val)};
+      co_yield pair;
+      ++i;
    }
 }
-int main() {
-   auto input = R"(
-one two three
-i am a new line
-hello
-)";
 
-   for (auto line : (split_by_lines_and_whitespace(input))) {
-      std::cout << "Line: ";
-      for (auto s : line) {
-         std::cout << s << ',';
-      }
-      std::cout << '\n';
-   }
+TEST_CASE("split") {
+   auto string = R"(one two three
+four five six
+seven eight nine)";
 
-   for (auto i : (tl::rand() | std::views::take(10))) {
-      std::cout << i << '\n';
+   std::vector<std::vector<std::string>> result = {
+      {"one", "two", "three"},
+      {"four", "five", "six"},
+      {"seven", "eight", "nine"}
+   };
+   for (auto&& [i, val] : enumerate(split_by_lines_and_whitespace(string))) {
+      REQUIRE(val == result[i]);
    }
 }
