@@ -79,6 +79,9 @@ namespace tl {
          using difference_type = std::ptrdiff_t;
 
          iterator() = default;
+         ~iterator() {
+            if (handle_) handle_.destroy();
+         }
 
          //Non-copyable because coroutine handles point to a unique resource
          iterator(iterator const&) = delete;
@@ -120,6 +123,9 @@ namespace tl {
       using handle_type = std::coroutine_handle<promise_type>;
 
       generator() noexcept = default;
+      ~generator() {
+         if (handle_) handle_.destroy();
+      }
 
       generator(generator const&) = delete;
       generator(generator&& rhs) noexcept : handle_(std::exchange(rhs.handle_, nullptr)) {}
@@ -134,7 +140,7 @@ namespace tl {
          if (handle_.done()) {
             handle_.promise().rethrow_if_exception();
          }
-         return {handle_};
+         return {std::exchange(handle_, nullptr)};
       }
 
       sentinel end() const noexcept {
