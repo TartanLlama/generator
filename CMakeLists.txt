@@ -2,7 +2,7 @@
 project(tl-generator 
   HOMEPAGE_URL https://tl.tartanllama.xyz
   DESCRIPTION "Single-header, ranges-compatible generator type built on C++20 coroutines"
-  VERSION 0.1.0
+  VERSION 0.2.0
   LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
