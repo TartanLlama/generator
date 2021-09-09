@@ -18,7 +18,7 @@
 #define TL_GENERATOR_HPP
 
 #define TL_GENERATOR_VERSION_MAJOR 0
-#define TL_GENERATOR_VERSION_MINOR 2
+#define TL_GENERATOR_VERSION_MINOR 3
 #define TL_GENERATOR_VERSION_PATCH 0
 
 #include <coroutine>
@@ -108,7 +108,7 @@ namespace tl {
             (void)this->operator++();
          }
 
-         reference_type operator*() 
+         reference_type operator*() const
             noexcept(noexcept(std::is_nothrow_copy_constructible_v<reference_type>)){
             return *handle_.promise().value_;
          }
