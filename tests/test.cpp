@@ -88,3 +88,20 @@ seven eight nine)";
       REQUIRE(val == result[i]);
    }
 }
+
+tl::generator<const char*> generate() {
+   co_yield "one";
+   co_yield "two";
+   co_yield "three";
+}
+
+TEST_CASE("pointers") {
+   std::vector<std::string> result = {
+      "one", "two", "three"
+   };
+   std::size_t i = 0;
+   for (auto&& val : generate()) {
+      REQUIRE(val == result[i]);
+      ++i;
+   }
+}
