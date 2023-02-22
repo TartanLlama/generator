@@ -74,7 +74,7 @@ if (GENERATOR_BUILD_TESTS)
   set(CATCH_BUILD_TESTING OFF)
   set(CATCH_INSTALL_DOCS OFF)
   FetchContent_Declare(Catch2 URL
-    https://github.com/catchorg/Catch2/archive/v2.9.2.zip) 
+    https://github.com/catchorg/Catch2/archive/v2.13.9.zip) 
   FetchContent_MakeAvailable(Catch2)
 
   file(GENERATE OUTPUT catch.main.cpp
