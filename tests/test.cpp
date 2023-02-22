@@ -84,7 +84,8 @@ seven eight nine)";
       {"four", "five", "six"},
       {"seven", "eight", "nine"}
    };
-   for (auto&& [i, val] : enumerate(split_by_lines_and_whitespace(string))) {
+   auto gen = split_by_lines_and_whitespace(string);
+   for (auto&& [i, val] : enumerate(gen)) {
       REQUIRE(val == result[i]);
    }
 }
