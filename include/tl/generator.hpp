@@ -73,9 +73,9 @@ namespace tl {
          using handle_type = std::coroutine_handle<promise_type>;
 
       public:
-         using value_type = promise_type::value_type;
-         using reference_type = promise_type::reference_type;
-         using pointer_type = promise_type::pointer_type;
+         using value_type = typename promise_type::value_type;
+         using reference_type = typename promise_type::reference_type;
+         using pointer_type = typename promise_type::pointer_type;
          using difference_type = std::ptrdiff_t;
 
          iterator() = default;
