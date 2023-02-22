@@ -31,12 +31,10 @@ jobs:
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGENERATOR_BUILD_TESTS=On
       
     - name: Configure Linux
-      if: matrix.os == 'ubuntu-22.04' 
-      env:
-        CXX: ${{ matrix.cxx }}
+      if: matrix.os == 'ubuntu-22.04'
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGENERATOR_BUILD_TESTS=On
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGENERATOR_BUILD_TESTS=On -DCMAKE_CXX_COMPILER=${{matrix.cxx}}
 
     - name: Build
       working-directory: ${{github.workspace}}/build
