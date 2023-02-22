@@ -1,5 +1,5 @@
 ﻿///
-// generator - Single-header, ranges-compatible generator type built 
+// generator - Single-header, ranges-compatible generator type built
 // on C++20 coroutines
 // Written in 2021 by Sy Brand (tartanllama@gmail.com, @TartanLlama)
 //
@@ -18,7 +18,7 @@
 #define TL_GENERATOR_HPP
 
 #define TL_GENERATOR_VERSION_MAJOR 0
-#define TL_GENERATOR_VERSION_MINOR 3
+#define TL_GENERATOR_VERSION_MINOR 4
 #define TL_GENERATOR_VERSION_PATCH 0
 
 #include <coroutine>
@@ -32,8 +32,8 @@ namespace tl {
    class generator {
       struct promise {
          using value_type = std::remove_reference_t<T>;
-         using reference_type = value_type&;
-         using pointer_type = value_type*;
+         using reference_type = std::conditional_t<std::is_pointer_v<value_type>, value_type, value_type&>;
+         using pointer_type = std::conditional_t<std::is_pointer_v<value_type>, value_type, value_type*>;
 
          promise() = default;
 
@@ -57,7 +57,11 @@ namespace tl {
          }
 
          std::suspend_always yield_value(reference_type v) noexcept {
-            value_ = std::addressof(v);
+            if constexpr (std::is_pointer_v<value_type>) {
+               value_ = v;
+            } else {
+               value_ = std::addressof(v);
+            }
             return {};
          }
 
@@ -110,7 +114,10 @@ namespace tl {
 
          reference_type operator*() const
             noexcept(noexcept(std::is_nothrow_copy_constructible_v<reference_type>)){
-            return *handle_.promise().value_;
+            if constexpr (std::is_pointer_v<value_type>)
+               return handle_.promise().value_;
+            else
+               return *handle_.promise().value_;
          }
 
       private:
